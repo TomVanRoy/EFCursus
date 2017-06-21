@@ -7,16 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EFCursus
+namespace Opdracht
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class OpleidingenEntities : DbContext
+    public partial class BankEntities : DbContext
     {
-        public OpleidingenEntities()
-            : base("name=OpleidingenEntities")
+        public BankEntities()
+            : base("name=BankEntities")
         {
         }
     
@@ -25,10 +25,8 @@ namespace EFCursus
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Campussen> Campussen { get; set; }
-        public virtual DbSet<Docenten> Docenten { get; set; }
-        public virtual DbSet<Voorrad> Voorraden { get; set; }
-        public virtual DbSet<Cursist> Cursisten { get; set; }
-        public virtual DbSet<Cursus> Cursussen { get; set; }
+        public virtual DbSet<Klanten> Klanten { get; set; }
+        public virtual DbSet<Rekeningen> Rekeningen { get; set; }
+        public virtual DbSet<Personeelslid> Personeel { get; set; }
     }
 }

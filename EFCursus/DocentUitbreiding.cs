@@ -6,16 +6,8 @@ using System.Threading.Tasks;
 
 namespace EFCursus
 {
-    public partial class Docenten
+    public partial class Docent
     {
-        public string Naam
-        {
-            get
-            {
-                return Voornaam + " " + Familienaam;
-            }
-        }
-
         public void Opslag(decimal bedrag)
         {
             Wedde += bedrag;

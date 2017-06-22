@@ -5,11 +5,16 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="bdab66abb12341a393c9e752a90690e3" Name="Diagram1">
-        <EntityTypeShape EntityType="BankModel.Klanten" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="BankModel.Rekeningen" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BankModel.Klanten" Width="1.5" PointX="0.5" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BankModel.Rekening" Width="1.5" PointX="2.75" PointY="0.5" IsExpanded="true" />
         <AssociationConnector Association="BankModel.FK__Rekeninge__Klant__1273C1CD" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="BankModel.Personeelslid" Width="1.5" PointX="0.75" PointY="3.25" />
+        <EntityTypeShape EntityType="BankModel.Personeelslid" Width="1.5" PointX="7.375" PointY="0.5" />
         <AssociationConnector Association="BankModel.FK__Personeel__Manag__239E4DCF" />
+        <EntityTypeShape EntityType="BankModel.Zichtrekening" Width="1.5" PointX="1.875" PointY="3.125" />
+        <EntityTypeShape EntityType="BankModel.Spaarrekening" Width="1.5" PointX="3.625" PointY="3.125" />
+        <InheritanceConnector EntityType="BankModel.Zichtrekening" />
+        <InheritanceConnector EntityType="BankModel.Spaarrekening" />
+        <EntityTypeShape EntityType="BankModel.TotaleSaldoPerKlant" Width="1.75" PointX="5" PointY="0.5" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

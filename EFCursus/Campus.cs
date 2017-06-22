@@ -12,12 +12,12 @@ namespace EFCursus
     using System;
     using System.Collections.Generic;
     
-    public partial class Campussen
+    public partial class Campus
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Campussen()
+        public Campus()
         {
-            this.Docenten = new HashSet<Docenten>();
+            this.Docenten = new HashSet<Docent>();
         }
     
         public int CampusNr { get; set; }
@@ -28,6 +28,6 @@ namespace EFCursus
         public string Gemeente { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Docenten> Docenten { get; set; }
+        public virtual ICollection<Docent> Docenten { get; set; }
     }
 }

@@ -65,6 +65,68 @@ namespace EFCursus
             }
         }
 
+        private static void CampussenVanTotPostCode()
+        {
+            using (var entities = new OpleidingenEntities())
+            {
+                foreach (var campus in entities.CampussenVanTotPostCode("8000", "8999"))
+                {
+                    Console.WriteLine("{0}: {1}", campus.Naam, campus.PostCode);
+                }
+            }
+        }
+
+        private static void CampussenVanTotPostCode2()
+        {
+            using (var entities = new OpleidingenEntities())
+            {
+                foreach (var voornaamAantal in entities.AantalDocentenPerVoornaam())
+                {
+                    Console.WriteLine("{0} {1}", voornaamAantal.Voornaam, voornaamAantal.Aantal);
+                }
+            }
+        }
+
+        private static void CampussenVanTotPostCode3()
+        {
+            Console.Write("Opslagpercentage: ");
+            decimal percentage;
+            if (decimal.TryParse(Console.ReadLine(), out percentage))
+            {
+                using (var entities = new OpleidingenEntities())
+                {
+                    var aantalDocentenAangepast = entities.WeddeVerhoging(percentage);
+                    Console.WriteLine("{0} docenten aangepast", aantalDocentenAangepast);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Tik een getal");
+            }
+        }
+
+        private static void CampussenVanTotPostCode4()
+        {
+            Console.Write("Famalienaam: ");
+            var familienaam = Console.ReadLine();
+            using (var entities = new OpleidingenEntities())
+            {
+                var aantalDocenten = entities.AantalDocentenMetFamilienaam(familienaam);
+                Console.WriteLine("{0} docent(en)", aantalDocenten.First());
+            }
+        }
+
+        private static void ComplexType()
+        {
+            using (var entities = new OpleidingenEntities())
+            {
+                foreach (var cursist in (from eenCursist in entities.Cursisten select eenCursist))
+                {
+                    Console.WriteLine(cursist.Naam.InformeleBegroeting);
+                }
+            }
+        }
+
         private static void EagerLoading()
         {
             using (var entities = new OpleidingenEntities())
@@ -78,7 +140,7 @@ namespace EFCursus
                         Console.Write("Voornaam: ");
                         var voornaam = Console.ReadLine();
                         var query1 = from docent in entities.Docenten.Include("Campus")
-                                     where docent.Voornaam == voornaam
+                                     where docent.Naam.Voornaam == voornaam
                                      select docent;
 
                         foreach (var docent in query1)
@@ -122,7 +184,7 @@ namespace EFCursus
 
         private static void EenEntityToevoegen()
         {
-            var campus = new Campussen
+            var campus = new Campus
             {
                 Naam = "Naam1",
                 Straat = "Straat1",
@@ -421,22 +483,23 @@ namespace EFCursus
             }
         }
 
+        /*
         private static void EntityToevoegenEnAssociatieDefinierenVanuitVeelKant()
         {
-            var docent3 = new Docenten
+            var docent3 = new Docent
             {
                 Voornaam = "Voornaam3",
                 Familienaam = "Familienaam3",
                 Wedde = 3
             };
-            var docent4 = new Docenten
+            var docent4 = new Docent
             {
                 Voornaam = "Voornaam4",
                 Familienaam = "Familienaam4",
                 Wedde = 4,
                 CampusNr = 1
             };
-            var docent5 = new Docenten
+            var docent5 = new Docent
             {
                 Voornaam = "Voornaam5",
                 Familienaam = "Familienaam5",
@@ -459,6 +522,22 @@ namespace EFCursus
                 }
             }
         }
+        */
+
+        private static void Enumeration()
+        {
+            using (var entities = new OpleidingenEntities())
+            {
+                /*
+                foreach (var docent in entities.Docenten)
+                {
+                    Console.WriteLine("{0}: {1}", docent.Naam, docent.Geslacht);
+                }
+                */
+                entities.Docenten.Add(new Docent { Naam = new Naam { Voornaam = "Brigitta", Familienaam = "Roos" }, Wedde = 2000, Geslacht = Geslacht.Vrouw, CampusNr = 1 });
+                entities.SaveChanges();
+            }
+        }
 
         private static void Exit()
         {
@@ -472,7 +551,7 @@ namespace EFCursus
             using (var entities = new OpleidingenEntities())
             {
                 var query = from docent in entities.Docenten
-                            group docent by docent.Voornaam into VoornaamGroep
+                            group docent by docent.Naam.Voornaam into VoornaamGroep
                             select new { VoornaamGroep, Voornaam = VoornaamGroep.Key };
                 /*
                 var query = entities.Docenten
@@ -522,7 +601,7 @@ namespace EFCursus
                 Console.Write("Voornaam: ");
                 var voornaam = Console.ReadLine();
                 var query = from docent in entities.Docenten
-                            where docent.Voornaam == voornaam
+                            where docent.Naam.Voornaam == voornaam
                             select docent;
 
                 foreach (var docent in query)
@@ -540,7 +619,7 @@ namespace EFCursus
             {
                 Console.Write("Sorteren: 1=op wedde, 2=op familienaam, 3=op voornaam: ");
                 var sorterenOp = Console.ReadLine();
-                Func<Docenten, object> sorteerLambda;
+                Func<Docent, object> sorteerLambda;
 
                 switch (sorterenOp)
                 {
@@ -549,11 +628,11 @@ namespace EFCursus
                         break;
 
                     case "2":
-                        sorteerLambda = (docent) => docent.Familienaam;
+                        sorteerLambda = (docent) => docent.Naam.Familienaam;
                         break;
 
                     case "3":
-                        sorteerLambda = (docent) => docent.Voornaam;
+                        sorteerLambda = (docent) => docent.Naam.Voornaam;
                         break;
 
                     default:
@@ -583,7 +662,7 @@ namespace EFCursus
 
         private static void Main(string[] args)
         {
-            TablePerType();
+            CampussenVanTotPostCode4();
             Exit();
         }
 
@@ -600,7 +679,7 @@ namespace EFCursus
 
         private static void MeerdereEntitiesToevoegen()
         {
-            var campus2 = new Campussen
+            var campus2 = new Campus
             {
                 Naam = "Naam2",
                 Straat = "Straat2",
@@ -608,7 +687,7 @@ namespace EFCursus
                 PostCode = "2222",
                 Gemeente = "Gemeente2"
             };
-            var campus3 = new Campussen
+            var campus3 = new Campus
             {
                 Naam = "Naam3",
                 Straat = "Straat3",
@@ -620,24 +699,6 @@ namespace EFCursus
             {
                 entities.Campussen.Add(campus2);
                 entities.Campussen.Add(campus3);
-                entities.SaveChanges();
-            }
-        }
-
-        private static void NieuweGeassocieerdeEntities()
-        {
-            var campus4 = new Campussen { Naam = "Naam4", Straat = "Straat4", HuisNr = "4", PostCode = "4444", Gemeente = "Gemeente4" };
-            var docent1 = new Docenten { Voornaam = "Voornaam1", Familienaam = "Familienaam1", Wedde = 1 };
-            campus4.Docenten.Add(docent1);
-
-            var campus5 = new Campussen { Naam = "Naam5", Straat = "Straat5", HuisNr = "5", PostCode = "5555", Gemeente = "Gemeente5" };
-            var docent2 = new Docenten { Voornaam = "Voornaam2", Familienaam = "Familienaam2", Wedde = 2 };
-            docent2.Campus = campus5;
-
-            using (var entities = new OpleidingenEntities())
-            {
-                entities.Campussen.Add(campus4);
-                entities.Docenten.Add(docent2);
                 entities.SaveChanges();
             }
         }
@@ -670,7 +731,7 @@ namespace EFCursus
                 if (int.TryParse(Console.ReadLine(), out docentNr))
                 {
                     var docent = entities.Docenten.Find(docentNr);
-                    Console.WriteLine(docent == null ? "Niet gevonden" : docent.Naam);
+                    Console.WriteLine(docent == null ? "Niet gevonden" : docent.Naam.ToString());
                 }
                 else
                 {
@@ -681,7 +742,7 @@ namespace EFCursus
 
         private static void QueryToList()
         {
-            List<Campussen> campussen;
+            List<Campus> campussen;
             using (var entities = new OpleidingenEntities())
             {
                 var query = from campus in entities.Campussen
@@ -761,6 +822,46 @@ namespace EFCursus
             }
         }
 
+        private static void Views()
+        {
+            using (var entities = new OpleidingenEntities())
+            {
+                var query = from bestBetaaldeDocentPerCampus
+                            in entities.BestBetaaldeDocentenPerCampus
+                            orderby bestBetaaldeDocentPerCampus.CampusNr, bestBetaaldeDocentPerCampus.Voornaam, bestBetaaldeDocentPerCampus.Familienaam
+                            select bestBetaaldeDocentPerCampus;
+                var vorigCampusNr = 0;
+                foreach (var bestbetaaldeDocentPerCampus in query)
+                {
+                    if (bestbetaaldeDocentPerCampus.CampusNr != vorigCampusNr)
+                    {
+                        Console.WriteLine("{0} {1} Grootste wedde: ", bestbetaaldeDocentPerCampus.Naam, bestbetaaldeDocentPerCampus.GrootsteWedde);
+                        vorigCampusNr = bestbetaaldeDocentPerCampus.CampusNr;
+                    }
+                    Console.WriteLine("\t{0} {1}", bestbetaaldeDocentPerCampus.Voornaam, bestbetaaldeDocentPerCampus.Familienaam);
+                }
+            }
+        }
+
+        /*
+        private static void NieuweGeassocieerdeEntities()
+        {
+            var campus4 = new Campus { Naam = "Naam4", Straat = "Straat4", HuisNr = "4", PostCode = "4444", Gemeente = "Gemeente4" };
+            var docent1 = new Docent { Voornaam = "Voornaam1", Familienaam = "Familienaam1", Wedde = 1 };
+            campus4.Docenten.Add(docent1);
+
+            var campus5 = new Campus { Naam = "Naam5", Straat = "Straat5", HuisNr = "5", PostCode = "5555", Gemeente = "Gemeente5" };
+            var docent2 = new Docent { Voornaam = "Voornaam2", Familienaam = "Familienaam2", Wedde = 2 };
+            docent2.Campus = campus5;
+
+            using (var entities = new OpleidingenEntities())
+            {
+                entities.Campussen.Add(campus4);
+                entities.Docenten.Add(docent2);
+                entities.SaveChanges();
+            }
+        }
+        */
         /*
         private static List<Campussen> FindAllCampussen()
         {

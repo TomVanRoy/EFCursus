@@ -10,16 +10,10 @@
 namespace EFCursus
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Docenten
+    public partial class AantalDocentenPerVoornaam_Result
     {
-        public int DocentNr { get; set; }
         public string Voornaam { get; set; }
-        public string Familienaam { get; set; }
-        public decimal Wedde { get; set; }
-        public int CampusNr { get; set; }
-    
-        public virtual Campussen Campus { get; set; }
+        public Nullable<int> Aantal { get; set; }
     }
 }

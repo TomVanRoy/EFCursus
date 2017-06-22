@@ -29,6 +29,17 @@
           <Property Name="Saldo" Type="decimal" Precision="10" Scale="2" Nullable="false" />
           <Property Name="Soort" Type="char" MaxLength="1" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Bank.dbo.TotaleSaldoPerKlant' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="TotaleSaldoPerKlant">
+          <Key>
+            <PropertyRef Name="KlantNr" />
+            <PropertyRef Name="Voornaam" />
+          </Key>
+          <Property Name="KlantNr" Type="int" Nullable="false" />
+          <Property Name="Voornaam" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TotaleSaldo" Type="decimal" Precision="38" Scale="2" />
+        </EntityType>
         <Association Name="FK__Personeel__Manag__239E4DCF">
           <End Role="Personeel" Type="Self.Personeel" Multiplicity="0..1" />
           <End Role="Personeel1" Type="Self.Personeel" Multiplicity="*" />
@@ -53,10 +64,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="AdministratieveKost" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Kost" Type="decimal" Mode="In" />
+        </Function>
         <EntityContainer Name="BankModelStoreContainer">
           <EntitySet Name="Klanten" EntityType="Self.Klanten" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Personeel" EntityType="Self.Personeel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rekeningen" EntityType="Self.Rekeningen" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TotaleSaldoPerKlant" EntityType="Self.TotaleSaldoPerKlant" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [TotaleSaldoPerKlant].[KlantNr] AS [KlantNr], 
+    [TotaleSaldoPerKlant].[Voornaam] AS [Voornaam], 
+    [TotaleSaldoPerKlant].[TotaleSaldo] AS [TotaleSaldo]
+    FROM [dbo].[TotaleSaldoPerKlant] AS [TotaleSaldoPerKlant]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK__Personeel__Manag__239E4DCF" Association="Self.FK__Personeel__Manag__239E4DCF">
             <End Role="Personeel" EntitySet="Personeel" />
             <End Role="Personeel1" EntitySet="Personeel" />
@@ -78,19 +99,18 @@
           <Property Name="Voornaam" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" ConcurrencyMode="Fixed" />
           <NavigationProperty Name="Rekeningen" Relationship="Self.FK__Rekeninge__Klant__1273C1CD" FromRole="Klanten" ToRole="Rekeningen" />
         </EntityType>
-        <EntityType Name="Rekeningen">
+        <EntityType Name="Rekening" Abstract="true">
           <Key>
             <PropertyRef Name="RekeningNr" />
           </Key>
           <Property Name="RekeningNr" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="KlantNr" Type="Int32" Nullable="false" />
           <Property Name="Saldo" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
-          <Property Name="Soort" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Klanten" Relationship="Self.FK__Rekeninge__Klant__1273C1CD" FromRole="Rekeningen" ToRole="Klanten" />
         </EntityType>
         <Association Name="FK__Rekeninge__Klant__1273C1CD">
           <End Role="Klanten" Type="Self.Klanten" Multiplicity="1" />
-          <End Role="Rekeningen" Type="Self.Rekeningen" Multiplicity="*" />
+          <End Role="Rekeningen" Type="BankModel.Rekening" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Klanten">
               <PropertyRef Name="KlantNr" />
@@ -102,7 +122,7 @@
         </Association>
         <EntityContainer Name="BankEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Klanten" EntityType="Self.Klanten" />
-          <EntitySet Name="Rekeningen" EntityType="Self.Rekeningen" />
+          <EntitySet Name="Rekeningen" EntityType="BankModel.Rekening" />
           <AssociationSet Name="FK__Rekeninge__Klant__1273C1CD" Association="Self.FK__Rekeninge__Klant__1273C1CD">
             <End Role="Klanten" EntitySet="Klanten" />
             <End Role="Rekeningen" EntitySet="Rekeningen" />
@@ -112,6 +132,10 @@
             <End Role="Personeel" EntitySet="Personeel" />
             <End Role="Personeel1" EntitySet="Personeel" />
           </AssociationSet>
+          <EntitySet Name="TotaleSaldoPerKlant" EntityType="BankModel.TotaleSaldoPerKlant" />
+          <FunctionImport Name="AdministratieveKost">
+            <Parameter Name="Kost" Mode="In" Type="Decimal" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Personeelslid">
           <Key>
@@ -135,6 +159,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Zichtrekening" BaseType="BankModel.Rekening">
+        </EntityType>
+        <EntityType Name="Spaarrekening" BaseType="BankModel.Rekening">
+        </EntityType>
+        <EntityType Name="TotaleSaldoPerKlant">
+          <Key>
+            <PropertyRef Name="KlantNr" />
+            <PropertyRef Name="Voornaam" />
+          </Key>
+          <Property Name="KlantNr" Type="Int32" Nullable="false" />
+          <Property Name="Voornaam" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TotaleSaldo" Type="Decimal" Precision="38" Scale="2" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -150,12 +187,23 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Rekeningen">
-            <EntityTypeMapping TypeName="BankModel.Rekeningen">
+            <EntityTypeMapping TypeName="IsTypeOf(BankModel.Rekening)">
               <MappingFragment StoreEntitySet="Rekeningen">
                 <ScalarProperty Name="RekeningNr" ColumnName="RekeningNr" />
-                <ScalarProperty Name="KlantNr" ColumnName="KlantNr" />
                 <ScalarProperty Name="Saldo" ColumnName="Saldo" />
-                <ScalarProperty Name="Soort" ColumnName="Soort" />
+                <ScalarProperty Name="KlantNr" ColumnName="KlantNr" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="IsTypeOf(BankModel.Spaarrekening)">
+              <MappingFragment StoreEntitySet="Rekeningen">
+                <ScalarProperty Name="RekeningNr" ColumnName="RekeningNr" />
+                <Condition ColumnName="Soort" Value="S" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="IsTypeOf(BankModel.Zichtrekening)">
+              <MappingFragment StoreEntitySet="Rekeningen">
+                <ScalarProperty Name="RekeningNr" ColumnName="RekeningNr" />
+                <Condition ColumnName="Soort" Value="Z" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -168,6 +216,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="TotaleSaldoPerKlant">
+            <EntityTypeMapping TypeName="BankModel.TotaleSaldoPerKlant">
+              <MappingFragment StoreEntitySet="TotaleSaldoPerKlant">
+                <ScalarProperty Name="TotaleSaldo" ColumnName="TotaleSaldo" />
+                <ScalarProperty Name="Voornaam" ColumnName="Voornaam" />
+                <ScalarProperty Name="KlantNr" ColumnName="KlantNr" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AdministratieveKost" FunctionName="BankModel.Store.AdministratieveKost" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -7,23 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Opdracht
+namespace EFCursus
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Klanten
+    public partial class BestBetaaldeDocentPerCampus
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Klanten()
-        {
-            this.Rekeningen = new HashSet<Rekening>();
-        }
-    
-        public int KlantNr { get; set; }
+        public int CampusNr { get; set; }
+        public string Naam { get; set; }
+        public Nullable<decimal> GrootsteWedde { get; set; }
+        public int DocentNr { get; set; }
         public string Voornaam { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Rekening> Rekeningen { get; set; }
+        public string Familienaam { get; set; }
     }
 }

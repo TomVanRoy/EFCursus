@@ -8,9 +8,11 @@ namespace Opdracht
 {
     public partial class Rekeningen
     {
+        /*
         public void Storten(decimal bedrag)
         {
             Saldo += bedrag;
         }
+        */
     }
 }

@@ -12,22 +12,21 @@ namespace EFCursus
     using System;
     using System.Collections.Generic;
     
-    public partial class Cursist
+    public partial class Docent
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Cursist()
+        public Docent()
         {
-            this.Beschermelingen = new HashSet<Cursist>();
             this.Naam = new Naam();
         }
     
-        public int CursistNr { get; set; }
-        public Nullable<int> MentorNr { get; set; }
+        public int DocentNr { get; set; }
+        public decimal Wedde { get; set; }
+        public int CampusNr { get; set; }
+        public Nullable<Geslacht> Geslacht { get; set; }
     
         public Naam Naam { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Cursist> Beschermelingen { get; set; }
-        public virtual Cursist Mentor { get; set; }
+        public virtual Campus Campus { get; set; }
     }
 }

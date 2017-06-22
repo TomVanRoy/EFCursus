@@ -10,6 +10,37 @@ namespace Opdracht
 {
     internal class Program
     {
+        private static void AdministratieveKost()
+        {
+            Console.Write("Met hoeveel moeten alle saldo's verlaagd worden? ");
+            decimal bedrag;
+            if (decimal.TryParse(Console.ReadLine(), out bedrag))
+            {
+                using (var entities = new BankEntities())
+                {
+                    var aantalAangepast = entities.AdministratieveKost(bedrag);
+                    Console.WriteLine("{0} rekeningen aangepast", aantalAangepast);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Tik een getal");
+            }
+        }
+
+        private static void Afbeelden(List<Personeelslid> personeel, int insprong)
+        {
+            foreach (var personeelslid in personeel)
+            {
+                Console.Write(new string('\t', insprong));
+                Console.WriteLine(personeelslid.Voornaam);
+                if (personeelslid.Onderlingen.Count != 0)
+                {
+                    Afbeelden(personeelslid.Onderlingen.ToList(), insprong + 1);
+                }
+            }
+        }
+
         private static void Exit()
         {
             Console.WriteLine("Druk op enter om het programma af te sluiten...");
@@ -121,7 +152,7 @@ namespace Opdracht
 
         private static void Main(string[] args)
         {
-            Personeel();
+            AdministratieveKost();
             Exit();
         }
 
@@ -174,19 +205,6 @@ namespace Opdracht
             }
         }
 
-        private static void Afbeelden(List<Personeelslid> personeel, int insprong)
-        {
-            foreach (var personeelslid in personeel)
-            {
-                Console.Write(new string('\t', insprong));
-                Console.WriteLine(personeelslid.Voornaam);
-                if (personeelslid.Onderlingen.Count != 0)
-                {
-                    Afbeelden(personeelslid.Onderlingen.ToList(), insprong + 1);
-                }
-            }
-        }
-
         private static void Personeel()
         {
             using (var entities = new BankEntities())
@@ -233,6 +251,32 @@ namespace Opdracht
             }
         }
 
+        private static void TotaleSaldoPerKlant()
+        {
+            using (var entities = new BankEntities())
+            {
+                foreach (var klant in entities.TotaleSaldoPerKlant.OrderBy(klant => klant.Voornaam))
+                {
+                    Console.WriteLine("{0}: {1}", klant.Voornaam, klant.TotaleSaldo);
+                }
+            }
+        }
+
+        private static void ZichtrekeningenSpaarrekeningen()
+        {
+            using (var entities = new BankEntities())
+            {
+                var query = from rekening in entities.Rekeningen
+                            where rekening is Zichtrekening
+                            orderby rekening.RekeningNr
+                            select rekening;
+                foreach (Zichtrekening rekening in query)
+                {
+                    Console.WriteLine(rekening.RekeningNr + ":  " + rekening.Saldo);
+                }
+            };
+        }
+
         private static void ZichtrekeningToevoegen()
         {
             int klantnr = 0;
@@ -260,15 +304,19 @@ namespace Opdracht
                     var rekeningnr = Console.ReadLine();
                     Rekeningen rekening = new Rekeningen
                     {
+                        /*
                         Saldo = 0,
                         RekeningNr = rekeningnr,
                         KlantNr = klantnr,
                         Soort = "Z"
+                        */
                     };
                     using (var entities = new BankEntities())
                     {
+                        /*
                         entities.Rekeningen.Add(rekening);
                         entities.SaveChanges();
+                        */
                     }
                 }
             }

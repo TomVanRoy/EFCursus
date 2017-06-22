@@ -12,13 +12,10 @@ namespace Opdracht
     using System;
     using System.Collections.Generic;
     
-    public partial class Rekeningen
+    public partial class TotaleSaldoPerKlant
     {
-        public string RekeningNr { get; set; }
         public int KlantNr { get; set; }
-        public decimal Saldo { get; set; }
-        public string Soort { get; set; }
-    
-        public virtual Klanten Klanten { get; set; }
+        public string Voornaam { get; set; }
+        public Nullable<decimal> TotaleSaldo { get; set; }
     }
 }

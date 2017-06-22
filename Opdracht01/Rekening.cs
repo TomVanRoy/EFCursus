@@ -12,18 +12,12 @@ namespace Opdracht
     using System;
     using System.Collections.Generic;
     
-    public partial class Klanten
+    public abstract partial class Rekening
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Klanten()
-        {
-            this.Rekeningen = new HashSet<Rekening>();
-        }
-    
+        public string RekeningNr { get; set; }
         public int KlantNr { get; set; }
-        public string Voornaam { get; set; }
+        public decimal Saldo { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Rekening> Rekeningen { get; set; }
+        public virtual Klanten Klanten { get; set; }
     }
 }

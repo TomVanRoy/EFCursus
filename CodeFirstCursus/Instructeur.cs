@@ -10,6 +10,9 @@ namespace CodeFirstCursus
 {
     public class Instructeur
     {
+        public Adres Adres { get; set; }
+        public virtual Campus Campus { get; set; }
+        public int CampusId { get; set; }
         public string Familienaam { get; set; }
         public bool? HeeftRijbewijs { get; set; }
 
@@ -19,6 +22,7 @@ namespace CodeFirstCursus
         [Key]
         public int InstructeurNr { get; set; }
 
+        public virtual ICollection<Verantwoordelijkheid> Verantwoordelijkheden { get; set; }
         public string Voornaam { get; set; }
 
         [Column("maandwedde")]

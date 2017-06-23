@@ -1,0 +1,29 @@
+﻿<Window x:Class="EFInWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EFInWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Opslaan" Click="Opslaan" />
+        </Menu>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <ListBox Name="listMentors" DisplayMemberPath="Naam" Grid.Row="0" SelectionChanged="ListMentorsSelectionChanged" />
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+            <DataGrid Name="gridBeschermelingen" Grid.Row="2" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Voornaam}" Header="Voornaam" Width="*" />
+                    <DataGridTextColumn Binding="{Binding Familienaam}" Header="Familienaam" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </DockPanel>
+</Window>
